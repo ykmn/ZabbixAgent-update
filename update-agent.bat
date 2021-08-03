@@ -7,14 +7,13 @@ set ZabbixAgentRelease=5.4
 set ZabbixAgentVersion=5.4.3
 :: Let default config path be in %ProgramData% C:\ProgramData\zabbix\zabbix_agentd.conf
 set configFile=C:\ProgramData\zabbix\zabbix_agentd.conf
-set ZabbixAgentService=Zabbix Agent
 
-if [%1]==[] goto::usage
+if [%1]==[] goto:usage
 set i=%1
 set i=%i:~0,2%
-if NOT %i%==\\ goto::usage
+if NOT %i%==\\ goto:usage
 
-if NOT [%2]==[--default] goto::start
+if NOT [%2]==[--default] goto:start
 if [%2]==[--default] set DEFAULT=DEFAULT
 
 :start
@@ -33,7 +32,6 @@ echo [92mProcessing \\%HOSTNAME%. [0m
 echo.
 echo [93mDisconnecting admin share. [0m
 net use \\%HOSTNAME%\c$ /DELETE >NUL
-net use \\%HOSTNAME%\c$ || (echo Error %ERRORLEVEL% && net helpmsg %ERRORLEVEL% && goto:eof)
 
 :: Detect OS architecture
 reg Query "\\%HOSTNAME%\HKLM\Hardware\Description\System\CentralProcessor\0" | find /i "x86" > NUL && set OSArchitecture=32-bit|| set OSArchitecture=64-bit
@@ -77,7 +75,7 @@ echo.
 echo [93m--------------------------------------------------------------------- [0m
 echo [93mSearching for Zabbix Agent service. [0m
 sc \\%HOSTNAME% query "Zabbix Agent" >NUL
-if ERRORLEVEL 1060 echo Zabbix Agent service is not found && goto::asktocontinue
+if ERRORLEVEL 1060 echo Zabbix Agent service is not found && goto:asktocontinue
 for /f "tokens=1* delims=:" %%a in ('sc \\%HOSTNAME% query "Zabbix Agent" ^| find "STATE"') do (
     echo Service found, state: %%~b
 )
