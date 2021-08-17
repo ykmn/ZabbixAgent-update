@@ -3,8 +3,10 @@
 :: Roman Ermakov <r.ermakov@emg.fm>
 :: v2.0 2021-08-02 Second release on Windows Batch
 setlocal EnableDelayedExpansion
-set ZabbixAgentRelease=5.4
+:: UPDATE  HERE TO LATEST VERSION!
 set ZabbixAgentVersion=5.4.3
+
+set ZabbixAgentRelease=%ZabbixAgentVersion:~0,3%
 :: Let default config path be in %ProgramData% C:\ProgramData\zabbix\zabbix_agentd.conf
 set configFile=C:\ProgramData\zabbix\zabbix_agentd.conf
 
