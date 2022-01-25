@@ -3,18 +3,20 @@
 :: Roman Ermakov <r.ermakov@emg.fm>
 :: v2.0 2021-08-02 Second release on Windows Batch
 setlocal EnableDelayedExpansion
-:: UPDATE  HERE TO LATEST VERSION!
-set ZabbixAgentVersion=5.4.3
+:: UPDATE HERE TO LATEST VERSION!
+set ZabbixAgentVersion=5.4.9
 
 set ZabbixAgentRelease=%ZabbixAgentVersion:~0,3%
 :: Let default config path be in %ProgramData% C:\ProgramData\zabbix\zabbix_agentd.conf
 set configFile=C:\ProgramData\zabbix\zabbix_agentd.conf
 
+:: check for HOSTNAME parameter
 if [%1]==[] goto:usage
 set i=%1
 set i=%i:~0,2%
 if NOT %i%==\\ goto:usage
 
+:: check for DEFAULT parameter
 if NOT [%2]==[--default] goto:start
 if [%2]==[--default] set DEFAULT=DEFAULT
 
@@ -316,8 +318,8 @@ echo You need to have admin rights on remote host.
 echo This script uses network services. If you want to upgrade Zabbix Agent on local machine
 echo please restart this script elevated and use [93mupdate-agent \\localhost [0m
 echo.
-echo --default      if service found: removes old service and files without backup,
-echo                                  installs new service with default location of config file 
-echo                                  C:\ProgramData\Zabbix\zabbix_agentd.conf
-echo                                  and starts service after installation.
+echo --default      if service found: - removes old service and files without backup,
+echo                                  - installs new service with default location of config file 
+echo                                    C:\ProgramData\Zabbix\zabbix_agentd.conf
+echo                                  - starts service after installation.
 echo.
