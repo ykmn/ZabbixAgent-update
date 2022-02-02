@@ -309,8 +309,10 @@ echo [92mDone! [0m
 goto:eof
 
 :usage
-echo update-agent.bat       2021.08.02 Version 2.0
+echo.
+echo [93mupdate-agent.bat[0m                                             2021.08.02 Version 2.0
 echo Interactive tool for install, update or remove Zabbix Agent on remote Windows host.
+echo Agent version %ZabbixAgentVersion% will be installed.
 echo.
 echo [47m[30mUsage:[0m update-agent \\HOSTNAME [--default]
 echo.
