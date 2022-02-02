@@ -4,7 +4,7 @@
 :: v2.0 2021-08-02 Second release on Windows Batch
 setlocal EnableDelayedExpansion
 :: UPDATE TO LATEST VERSION!
-set ZabbixAgentVersion=5.4.9
+set ZabbixAgentVersion=5.4.10
 
 set ZabbixAgentRelease=%ZabbixAgentVersion:~0,3%
 :: Let default config path be in %ProgramData% C:\ProgramData\zabbix\zabbix_agentd.conf
@@ -271,6 +271,8 @@ echo [93m--------------------------------------------------------------------- 
 echo [93mCreating Zabbix Agent service: [0m
 echo Service executable path: "C:\Program Files\Zabbix Agent\zabbix_agentd.exe" --config "%configFile%"
 sc \\%HOSTNAME% create "Zabbix Agent" binPath= "\"C:\Program Files\Zabbix Agent\zabbix_agentd.exe\" --config \"%configFile%\"" start= auto
+sc \\%HOSTNAME% description "Zabbix Agent" "Provides system monitoring for Zabbix Server."
+
 
 :: Starting Zabbix Agent service
 :startservice
