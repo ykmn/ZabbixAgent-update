@@ -3,7 +3,7 @@
 :: Roman Ermakov <r.ermakov@emg.fm>
 :: v2.0 2021-08-02 Second release on Windows Batch
 setlocal EnableDelayedExpansion
-:: UPDATE HERE TO LATEST VERSION!
+:: UPDATE TO LATEST VERSION!
 set ZabbixAgentVersion=5.4.9
 
 set ZabbixAgentRelease=%ZabbixAgentVersion:~0,3%
@@ -137,7 +137,7 @@ echo [93mRemoving Zabbix Agent service: [0m
 :askbackupconfig
 if DEFINED DEFAULT goto:skipbackupconfig
 set choice=
-set /p choice=Do you want to backup Zabbix Agent configuration? (Y/N) 
+set /p choice=Do you want to backup Zabbix Agent configuration? (Y/N/Q) 
 if '%choice%'=='y' goto:dobackupconfig
 if '%choice%'=='Y' goto:dobackupconfig
 if '%choice%'=='n' goto:skipbackupconfig
@@ -149,8 +149,8 @@ echo.
 goto:askbackupconfig
 
 :dobackupconfig
-xcopy "\\%HOSTNAME%\c$\%configFile:~3%" "\\%HOSTNAME%\c$\%configFile:~3%.bak" /-Y
-:: without leading C:\
+xcopy "\\%HOSTNAME%\c$\%configFile:~3%" "\\%HOSTNAME%\c$\%configFile:~3%.%date%.bak" /-Y
+:: %configFile$ without leading C:\
 echo.
 :skipbackupconfig
 
@@ -159,7 +159,7 @@ echo.
 :askremoveservice
 if DEFINED DEFAULT goto:dodelservice
 set choice=
-set /p choice=[91mDo you want to remove Zabbix Agent service? (Y/N)[0m
+set /p choice=[91mDo you want to remove Zabbix Agent service? (Y/N/Q)[0m
 if not '%choice%'=='' set choice=%choice:~0,1%
 if '%choice%'=='y' goto:dodelservice
 if '%choice%'=='Y' goto:dodelservice
@@ -180,7 +180,7 @@ sc \\%HOSTNAME% delete "Zabbix Agent"
 echo.
 if DEFINED DEFAULT goto:newconfiglocation
 set choice=
-set /p choice=[92mDo you want to store configuration file in the default location C:\ProgramData\Zabbix\zabbix_agentd.conf ? (Y/N)[0m
+set /p choice=[92mDo you want to store configuration file in the default location C:\ProgramData\Zabbix\zabbix_agentd.conf ? (Y/N/Q)[0m
 if not '%choice%'=='' set choice=%choice:~0,1%
 if '%choice%'=='y' goto:newconfiglocation
 if '%choice%'=='Y' goto:newconfiglocation
@@ -205,7 +205,7 @@ echo Configuration file location: %configFile%
 if DEFINED DEFAULT goto:dodelfiles
 echo.
 set choice=
-set /p choice=[91mDo you want to remove old Zabbix Agent files? (Y/N)[0m
+set /p choice=[91mDo you want to remove old Zabbix Agent files? (Y/N/Q)[0m
 if not '%choice%'=='' set choice=%choice:~0,1%
 if '%choice%'=='y' goto:dodelfiles
 if '%choice%'=='Y' goto:dodelfiles
@@ -230,7 +230,7 @@ if DEFINED DEFAULT (
 if DEFINED DEFAULT goto:docontinue
 echo.
 set choice=
-set /p choice=[92mReady to install Zabbix Agent. Continue? (Y/N)[0m
+set /p choice=[92mReady to install Zabbix Agent. Continue? (Y/N/Q)[0m
 if not '%choice%'=='' set choice=%choice:~0,1%
 if '%choice%'=='y' goto:docontinue
 if '%choice%'=='Y' goto:docontinue
@@ -281,7 +281,7 @@ echo [93mStarting Zabbix Agent service: [0m
 if DEFINED DEFAULT goto:dostartservice
 :askstartservice
 set choice=
-set /p choice=Do you want to start Zabbix Agent service now? (Y/N)
+set /p choice=Do you want to start Zabbix Agent service now? (Y/N/Q)
 if not '%choice%'=='' set choice=%choice:~0,1%
 if '%choice%'=='y' goto:dostartservice
 if '%choice%'=='Y' goto:dostartservice
