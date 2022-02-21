@@ -12,8 +12,8 @@ Interactive manager for [Zabbix Agent](https://www.zabbix.com/download_agents) i
 ## Requirements:
 
 * You need to have PowerShell enabled on local machine;
-* You need to have admin credentials or remote or local machine. If you runing the script local please use "Run as Admin" feature;
-* You need to configure zabbix_agentd.conf, at least server IP addresses. Defaults are:
+* You need to have admin credentials on machine where you plan to manage Agent. If you manage Agent on local PC please use "Run as Admin" feature;
+* You need to configure zabbix_agentd.conf with at least server IP address. Defaults are:
     * store warning-level file log at `C:\ProgramData\Zabbix`;
     * enable and log remote commands;
     * `hostname` = `system.hostname`
@@ -75,7 +75,7 @@ Run non-interactive script for local machine. Please use elevation (Run as Admin
 [![BuyMeCoffee][buymecoffeebadge]][buymecoffee]
 
 ## History
-* 2021-08-03: 2.0 Initial release
+* 2021-08-03: 2.0 Second release on Windows Batch
 
 [zabbixagent]: https://www.zabbix.com/download
 [batbadge]: https://img.shields.io/badge/Windows%20Batch-PowerShell-blue
