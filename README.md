@@ -40,6 +40,7 @@ Run non-interactive script for local machine. Please use elevation (Run as Admin
 
 ### What this script do:
 
+* Checks for remote host availability by pinging it once.
 * Disconnects admin share (c$) for remote host.
 * Detects OS architecture (32/64-bit)
 * Downloads Zabbix Agent .ZIP-file, please manually update latest version in `ZabbixAgentVersion` variable in the code.
