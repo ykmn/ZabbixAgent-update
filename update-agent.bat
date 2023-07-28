@@ -2,35 +2,40 @@
 :: Zabbix Agent update with simple file copy and manual service management
 :: Roman Ermakov <r.ermakov@emg.fm>
 :: v2.0 2021-08-02 Second release on Windows Batch
+:: v2.1 2023-07-28 Added host availability check
 setlocal EnableDelayedExpansion
-:: UPDATE TO LATEST VERSION!
-set ZabbixAgentVersion=6.0.0
+:: UPDATE THIS VALUE TO LATEST AGENT VERSION!
+set ZabbixAgentVersion=6.4.4
 
 set ZabbixAgentRelease=%ZabbixAgentVersion:~0,3%
 :: Let default config path be in %ProgramData% C:\ProgramData\zabbix\zabbix_agentd.conf
 set configFile=C:\ProgramData\zabbix\zabbix_agentd.conf
 
-:: check for HOSTNAME parameter
 if [%1]==[] goto:usage
 set i=%1
 set i=%i:~0,2%
 if NOT %i%==\\ goto:usage
 
-:: check for DEFAULT parameter
 if NOT [%2]==[--default] goto:start
 if [%2]==[--default] set DEFAULT=DEFAULT
 
 :start
+echo.
+echo update-agent.bat       2023.07.28 Version 2.1
+echo Interactive tool for install, update or remove Zabbix Agent on remote Windows host.
+echo.
+
 :: get local path
 cd /D "%~dp0"
 set HOSTNAME=%1
 :: replacing \\
 set HOSTNAME=%HOSTNAME:\\=%
 
+echo [93mChecking %HOSTNAME% availability:[0m
+ping -n 1 %HOSTNAME% > nul 2> nul
+IF %ERRORLEVEL%==0 (echo %HOSTNAME% is available.) ELSE (echo [91m%HOSTNAME% is not available.[0m && goto:eof)
 
 :process
-echo.
-echo.
 echo [92m--------------------------------------------------------------------- [0m
 echo [92mProcessing \\%HOSTNAME%. [0m
 echo.
@@ -43,6 +48,7 @@ echo Detected %OSArchitecture% OS
 
 
 :: download ZIP
+:: https://cdn.zabbix.com/zabbix/binaries/stable/6.4/6.4.4/zabbix_agent-6.4.4-windows-amd64-openssl.zip
 :downloadzip
 if %OSArchitecture%==32-bit ( 
     set agentFilename=zabbix_agent-%ZabbixAgentVersion%-windows-i386-openssl.zip
@@ -89,7 +95,7 @@ echo [93m--------------------------------------------------------------------- 
 echo [93mQuerying Zabbix Agent service path. [0m
 for /f "tokens=1* delims=:" %%a in ('sc \\%HOSTNAME% qc "Zabbix Agent" ^| find "BINARY_PATH_NAME"') do (
 ::    echo %%~a
-    echo Found service path: %%~b
+    echo [92m Found service path:[0m %%~b
 ::    echo %%~c
     set "commandline=%%~b"
 )
@@ -137,7 +143,7 @@ echo [93mRemoving Zabbix Agent service: [0m
 :askbackupconfig
 if DEFINED DEFAULT goto:skipbackupconfig
 set choice=
-set /p choice=Do you want to backup Zabbix Agent configuration? (Y/N/Q) 
+set /p choice=Do you want to backup Zabbix Agent configuration? (Y/N) 
 if '%choice%'=='y' goto:dobackupconfig
 if '%choice%'=='Y' goto:dobackupconfig
 if '%choice%'=='n' goto:skipbackupconfig
@@ -149,8 +155,8 @@ echo.
 goto:askbackupconfig
 
 :dobackupconfig
-xcopy "\\%HOSTNAME%\c$\%configFile:~3%" "\\%HOSTNAME%\c$\%configFile:~3%.%date%.bak" /-Y
-:: %configFile$ without leading C:\
+xcopy "\\%HOSTNAME%\c$\%configFile:~3%" "\\%HOSTNAME%\c$\%configFile:~3%.bak" /-Y
+:: without leading C:\
 echo.
 :skipbackupconfig
 
@@ -159,7 +165,7 @@ echo.
 :askremoveservice
 if DEFINED DEFAULT goto:dodelservice
 set choice=
-set /p choice=[91mDo you want to remove Zabbix Agent service? (Y/N/Q)[0m
+set /p choice=[91mDo you want to remove Zabbix Agent service? (Y/N)[0m
 if not '%choice%'=='' set choice=%choice:~0,1%
 if '%choice%'=='y' goto:dodelservice
 if '%choice%'=='Y' goto:dodelservice
@@ -180,7 +186,7 @@ sc \\%HOSTNAME% delete "Zabbix Agent"
 echo.
 if DEFINED DEFAULT goto:newconfiglocation
 set choice=
-set /p choice=[92mDo you want to store configuration file in the default location C:\ProgramData\Zabbix\zabbix_agentd.conf ? (Y/N/Q)[0m
+set /p choice=[92mDo you want to store configuration file in the default location C:\ProgramData\Zabbix\zabbix_agentd.conf ? (Y/N)[0m
 if not '%choice%'=='' set choice=%choice:~0,1%
 if '%choice%'=='y' goto:newconfiglocation
 if '%choice%'=='Y' goto:newconfiglocation
@@ -195,7 +201,7 @@ goto:askconfiglocation
 set configFile=C:\ProgramData\Zabbix\zabbix_agentd.conf
 echo.
 :oldconfiglocation
-echo Configuration file location: %configFile%
+echo [92m Configuration file location:[0m %configFile%
 
 
 
@@ -205,7 +211,7 @@ echo Configuration file location: %configFile%
 if DEFINED DEFAULT goto:dodelfiles
 echo.
 set choice=
-set /p choice=[91mDo you want to remove old Zabbix Agent files? (Y/N/Q)[0m
+set /p choice=[91mDo you want to remove old Zabbix Agent files? (Y/N)[0m
 if not '%choice%'=='' set choice=%choice:~0,1%
 if '%choice%'=='y' goto:dodelfiles
 if '%choice%'=='Y' goto:dodelfiles
@@ -230,7 +236,7 @@ if DEFINED DEFAULT (
 if DEFINED DEFAULT goto:docontinue
 echo.
 set choice=
-set /p choice=[92mReady to install Zabbix Agent. Continue? (Y/N/Q)[0m
+set /p choice=[92mReady to install Zabbix Agent. Continue? (Y/N)[0m
 if not '%choice%'=='' set choice=%choice:~0,1%
 if '%choice%'=='y' goto:docontinue
 if '%choice%'=='Y' goto:docontinue
@@ -271,8 +277,6 @@ echo [93m--------------------------------------------------------------------- 
 echo [93mCreating Zabbix Agent service: [0m
 echo Service executable path: "C:\Program Files\Zabbix Agent\zabbix_agentd.exe" --config "%configFile%"
 sc \\%HOSTNAME% create "Zabbix Agent" binPath= "\"C:\Program Files\Zabbix Agent\zabbix_agentd.exe\" --config \"%configFile%\"" start= auto
-sc \\%HOSTNAME% description "Zabbix Agent" "Provides system monitoring for Zabbix Server."
-
 
 :: Starting Zabbix Agent service
 :startservice
@@ -283,7 +287,7 @@ echo [93mStarting Zabbix Agent service: [0m
 if DEFINED DEFAULT goto:dostartservice
 :askstartservice
 set choice=
-set /p choice=Do you want to start Zabbix Agent service now? (Y/N/Q)
+set /p choice=Do you want to start Zabbix Agent service now? (Y/N)
 if not '%choice%'=='' set choice=%choice:~0,1%
 if '%choice%'=='y' goto:dostartservice
 if '%choice%'=='Y' goto:dostartservice
@@ -311,19 +315,16 @@ echo [92mDone! [0m
 goto:eof
 
 :usage
-echo.
-echo [93mupdate-agent.bat[0m                                             2021.08.02 Version 2.0
-echo Interactive tool for install, update or remove Zabbix Agent on remote Windows host.
-echo Agent version %ZabbixAgentVersion% will be installed.
-echo.
 echo [47m[30mUsage:[0m update-agent \\HOSTNAME [--default]
 echo.
-echo You need to have admin rights on remote host.
-echo This script uses network services. If you want to upgrade Zabbix Agent on local machine
+echo * You need to set desired Agent version inside this script, line 8:
+echo               set ZabbixAgentVersion=6.4.4
+echo * You need to have admin rights on remote host.
+echo * This script uses network services. If you want to upgrade Zabbix Agent on local machine
 echo please restart this script elevated and use [93mupdate-agent \\localhost [0m
 echo.
-echo --default      if service found: - removes old service and files without backup,
-echo                                  - installs new service with default location of config file 
-echo                                    C:\ProgramData\Zabbix\zabbix_agentd.conf
-echo                                  - starts service after installation.
+echo --default      if service found: removes old service and files without backup,
+echo                                  installs new service with default location of config file 
+echo                                  C:\ProgramData\Zabbix\zabbix_agentd.conf
+echo                                  and starts service after installation.
 echo.
