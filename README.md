@@ -7,13 +7,13 @@ Interactive manager for Windows Zabbix Agent installation
 
 [![Zabbix Agent][batbadge]][zabbixagent]
 
-Interactive manager for [Zabbix Agent](https://www.zabbix.com/download) installation, update and removal on remote or local Windows host.
+Interactive manager for [Zabbix Agent](https://www.zabbix.com/download_agents) installation, update and removal on remote or local Windows host.
 
 ### Requirements:
 
-* You need to have PowerShell enabled on local machine;
-* You need to have admin credentials or remote or local machine. If you runing the script local please use "Run as Admin" feature;
-* You need to configure zabbix_agentd.conf, at least server IP addresses. Defaults are:
+* You need to have PowerShell enabled on local machine as this scipts partialy uses PoSh;
+* You need to have admin credentials or remote or local machine. If you running the script local please use "Run as Admin" feature;
+* You need to configure default `zabbix_agentd.conf`, at least server IP addresses. Defaults are:
     * store warning-level file log at `C:\ProgramData\Zabbix`;
     * enable and log remote commands;
     * `hostname` = `system.hostname`
@@ -24,11 +24,11 @@ Interactive manager for [Zabbix Agent](https://www.zabbix.com/download) installa
 
 `update-agent \\COMPUTERNAME`
 
-Run interactive script for \\COMPUTERNAME
+Run interactive script for \\\\COMPUTERNAME
 
 `update-agent \\COMPUTERNAME --default`
 
-Run non-interactive script for \\COMPUTERNAME
+Run non-interactive script for \\\\COMPUTERNAME
 
 `update-agent \\localhost`
 
@@ -75,7 +75,7 @@ Run non-interactive script for local machine. Please use elevation (Run as Admin
 [![BuyMeCoffee][buymecoffeebadge]][buymecoffee]
 
 ### History
-* 2021-08-03: 2.0 Initial release
+* 2021-08-03: 2.0 Initial release on Windows Batch
 * 2023-07-28: 2.1 Added check for host availability
 
 [zabbixagent]: https://www.zabbix.com/download
