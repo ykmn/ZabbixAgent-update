@@ -5,7 +5,7 @@
 :: v2.1 2023-07-28 Added host availability check
 setlocal EnableDelayedExpansion
 :: UPDATE THIS VALUE TO LATEST AGENT VERSION!
-set ZabbixAgentVersion=6.4.4
+set ZabbixAgentVersion=6.4.12
 
 set ZabbixAgentRelease=%ZabbixAgentVersion:~0,3%
 :: Let default config path be in %ProgramData% C:\ProgramData\zabbix\zabbix_agentd.conf
@@ -315,10 +315,12 @@ echo [92mDone! [0m
 goto:eof
 
 :usage
+echo.
+echo [93mupdate-agent.bat[0m                                             2024.03.07 Version 2.1
 echo [47m[30mUsage:[0m update-agent \\HOSTNAME [--default]
 echo.
 echo * You need to set desired Agent version inside this script, line 8:
-echo               set ZabbixAgentVersion=6.4.4
+echo               set ZabbixAgentVersion=6.4.12
 echo * You need to have admin rights on remote host.
 echo * This script uses network services. If you want to upgrade Zabbix Agent on local machine
 echo please restart this script elevated and use [93mupdate-agent \\localhost [0m
