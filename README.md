@@ -1,11 +1,12 @@
 # ZabbixAgent-update
+![Windows Batch](https://img.shields.io/badge/Windows%20Batch-%23909090.svg?style=for-the-badge&logo=Windows&logoColor=white)
+[![Licence](https://img.shields.io/github/license/ykmn/ff-Logger?style=for-the-badge)](./LICENSE)
+![Microsoft Windows](https://img.shields.io/badge/Microsoft-Windows-%FF5F91FF.svg?style=for-the-badge&logo=Microsoft%20Windows&logoColor=white)
+
 Interactive manager for Windows Zabbix Agent installation
 ---
 
 28.07.2023 Roman Ermakov <r.ermakov@emg.fm>
-
-
-[![Zabbix Agent][batbadge]][zabbixagent]
 
 Interactive manager for [Zabbix Agent](https://www.zabbix.com/download_agents) installation, update and removal on remote or local Windows host.
 
@@ -81,6 +82,7 @@ Run non-interactive script for local machine. Please use elevation (Run as Admin
 * 2023-07-28: 2.1 Added check for host availability
 
 [zabbixagent]: https://www.zabbix.com/download
-[batbadge]: https://img.shields.io/badge/Windows%20Batch-PowerShell-blue
+[batbadge]: https://img.shields.io/badge/Windows%20Batch-blue
 [buymecoffee]: https://www.buymeacoffee.com/twelve
 [buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-blue.svg?style=for-the-badge
+
